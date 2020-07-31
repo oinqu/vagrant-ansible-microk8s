@@ -1,0 +1,17 @@
+---
+- hosts: 'all'
+  become: true
+  roles:
+    - 'common'
+
+  vars:
+    disks:
+      log:
+        mountpoint: '/log'
+        vg: 'logs'
+        lv: 'log_data'
+        disk: '/dev/vdb'
+        src: '/dev/mapper/logs-log_data'
+        size: '+100%FREE'
+        fstype: 'xfs'
+        state: 'mounted'

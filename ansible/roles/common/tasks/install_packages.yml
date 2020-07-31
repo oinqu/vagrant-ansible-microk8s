@@ -1,0 +1,17 @@
+---
+- name: Install epel-release
+  yum:
+    name: epel-release
+
+- name: Install common packages
+  yum:
+    name:
+      - yum-utils
+      - iptables-services
+      - lvm2
+      - git
+      - htop
+      - net-tools
+      - telnet
+      - wget
+      - vim

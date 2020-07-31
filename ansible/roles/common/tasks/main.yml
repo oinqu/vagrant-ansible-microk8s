@@ -1,0 +1,11 @@
+---
+- name: Run common tasks
+  include_tasks: common_tasks.yml
+
+- name: Install common packages
+  include_tasks: install_packages.yml
+
+- name: Create extra disks
+  include_tasks: extra_disks.yml
+  with_dict: '{{ disks }}'
+  when: disks is defined

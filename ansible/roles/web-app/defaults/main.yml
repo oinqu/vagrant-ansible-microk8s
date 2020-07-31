@@ -1,0 +1,4 @@
+---
+kube_namespace: 'dev'
+app_name: 'web-app'
+kube_app_dir: '/app/{{ app_name }}'

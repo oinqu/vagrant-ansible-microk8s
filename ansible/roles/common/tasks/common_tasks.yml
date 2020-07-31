@@ -1,0 +1,8 @@
+---
+- name: Remove ipv6 from hosts file
+  copy:
+    src: files/config/hosts
+    dest: /etc/hosts
+    owner: root
+    group: root
+    mode: 0644

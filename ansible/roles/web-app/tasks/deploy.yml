@@ -1,0 +1,11 @@
+---
+- name: Run deploy script
+  shell: ./scripts/deploy.sh
+  args:
+    chdir: '{{ kube_app_dir }}'
+  become_user: vagrant
+  register: task_result
+  until: task_result is success
+  retries: 3
+  delay: 3
+  ignore_errors: yes

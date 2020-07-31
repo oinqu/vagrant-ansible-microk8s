@@ -1,0 +1,30 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ${DEPLOYMENT}
+spec:
+  selector:
+    matchLabels:
+      app: ${DEPLOYMENT}
+  replicas: ${REPLICAS}
+  template:
+    metadata:
+      name: ${DEPLOYMENT}
+      labels:
+        app: ${DEPLOYMENT}
+    spec:
+      containers:
+      - name: ${NAME}
+        image: ${IMAGE}
+        resources:
+          requests:
+            cpu: 10m
+            memory: 32Mi
+          limits:
+            cpu: 50m
+            memory: 128Mi
+        ports:
+          - containerPort: 8080
+            protocol: TCP
+            name: asgi

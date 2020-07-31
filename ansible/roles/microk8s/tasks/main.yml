@@ -1,0 +1,6 @@
+---
+- name: Install and configure Docker
+  include_tasks: docker.yml
+
+- name: Install and configure microk8s
+  include_tasks: microk8s.yml

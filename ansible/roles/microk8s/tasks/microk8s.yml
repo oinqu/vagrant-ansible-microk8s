@@ -1,0 +1,111 @@
+---
+- name: Install snap
+  yum:
+    name: snapd
+    state: latest
+
+- name: Create symbolic link for snapd
+  file:
+    src: /var/lib/snapd/snap
+    dest: /snap
+    state: link
+
+- name: Create an ssl directory for snap key generation problem workaround
+  file:
+    path: /usr/lib/ssl
+    state: directory
+
+- name: Create symbolic link for openssl.cnf for snap key generation problem workaround
+  file:
+    src: /etc/pki/tls/openssl.cnf 
+    dest: /usr/lib/ssl/openssl.cnf
+    state: link
+
+- name: Enable snapd
+  systemd:
+    state: restarted
+    enabled: yes
+    daemon_reload: yes
+    name: snapd.socket
+
+- name: Install snapd daemon
+  snap:
+    name: snapd
+    classic: yes
+  register: task_result
+  until: task_result is success
+  retries: 5
+  delay: 5
+  ignore_errors: yes
+
+- name: Install Microk8s
+  snap:
+    name: microk8s
+    classic: yes
+
+- name: Add the user 'vagrant' to group 'microk8s'
+  user:
+    append: yes
+    name: vagrant
+    groups: microk8s
+
+- name: Reset ssh connection
+  meta: reset_connection
+
+- name: Create kubectl alias
+  command: snap alias microk8s.kubectl kubectl
+
+- name: Setup kubectl autocompletion
+  lineinfile:
+    path: .bashrc
+    line: source <(kubectl completion bash)
+  become_user: vagrant
+
+- name: Enable microk8s dns
+  command: microk8s.enable dns
+  become_user: vagrant
+  register: task_result
+  until: task_result is success
+  retries: 5
+  delay: 5
+  ignore_errors: yes
+  
+#- name: Enable microk8s dashboard
+#  command: microk8s.enable dashboard
+#  become_user: vagrant
+#  register: task_result
+#  until: task_result is success
+#  retries: 5
+#  delay: 5
+#  ignore_errors: yes
+
+- name: Enable microk8s registry
+  command: microk8s.enable registry
+  become_user: vagrant
+  register: task_result
+  until: task_result is success
+  retries: 5
+  delay: 5
+  ignore_errors: yes
+
+- name: Start microk8s
+  command: microk8s.start
+  become_user: vagrant
+
+- name: Copy nginx ingress config
+  copy:
+    src: files/microk8s/mandatory.yaml
+    dest: /tmp
+
+- name: Configure nginx ingress
+  command: kubectl apply -f /tmp/mandatory.yaml
+  become_user: vagrant
+
+- name: Enable microk8s ingress
+  command: microk8s.enable ingress
+  become_user: vagrant
+  register: task_result
+  until: task_result is success
+  retries: 5
+  delay: 5
+  ignore_errors: yes

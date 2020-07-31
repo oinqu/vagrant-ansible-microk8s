@@ -1,0 +1,31 @@
+---
+- name: Create system folder '{{ item.value.mountpoint }}'
+  file:
+    path: '{{ item.value.mountpoint }}'
+    owner: root
+    group: root
+    state: directory
+
+- name: Create volume groups for {{ item.value.mountpoint }}
+  lvg:
+    vg: '{{ item.value.vg }}'
+    pvs: '{{ item.value.disk }}'
+
+- name: Create logical volumes for {{ item.value.mountpoint }}
+  lvol:
+    vg: '{{ item.value.vg }}'
+    lv: '{{ item.value.lv }}'
+    size: '{{ item.value.size }}'
+    state: present
+
+- name: Create {{ item.value.fstype }} filesystem
+  filesystem:
+    fstype: '{{ item.value.fstype }}'
+    dev: '{{ item.value.src }}'
+
+- name: Mount {{ item.value.mountpoint }}
+  mount:
+    path: '{{ item.value.mountpoint }}'
+    src: '{{ item.value.src }}'
+    fstype: '{{ item.value.fstype }}'
+    state: '{{ item.value.state }}'

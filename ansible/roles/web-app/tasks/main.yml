@@ -1,0 +1,6 @@
+---
+- name: Build the web
+  include_tasks: build.yml
+
+- name: Deploy the web
+  include_tasks: deploy.yml

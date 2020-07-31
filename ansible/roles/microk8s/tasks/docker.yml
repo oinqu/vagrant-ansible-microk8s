@@ -1,0 +1,32 @@
+---
+- name: Install device-mapper-persistent-data
+  yum:
+    name: device-mapper-persistent-data
+    state: latest
+
+- name: Install containerd.io
+  yum:
+    name: https://download.docker.com/linux/centos/7/x86_64/stable/Packages/containerd.io-1.2.6-3.3.el7.x86_64.rpm
+    state: present
+
+- name: Add Docker repo
+  get_url:
+    url: https://download.docker.com/linux/centos/docker-ce.repo
+    dest: /etc/yum.repos.d/docer-ce.repo
+
+- name: Install Docker
+  yum:
+    name: docker-ce
+    state: latest
+
+- name: Start Docker service
+  service:
+    name: docker
+    state: started
+    enabled: yes
+
+- name: Add user vagrant to docker group
+  user:
+    name: vagrant
+    groups: docker
+    append: yes
