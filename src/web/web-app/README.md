@@ -1,1 +1,1 @@
-# Kubernetized mon-tools1!
+# Kubernetized FastAPI demo app!
